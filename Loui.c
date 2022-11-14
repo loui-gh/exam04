@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <string.h>
+#include <sys/wait.h>
 #include <stdlib.h>
 
 #include <stdio.h>
@@ -33,14 +34,25 @@ char **ft_find_cmd(char **argv, int placeholder, int i)
 
 int	execute_cmd(char **argv_1cmd, char **envp)
 {
-	// pid_t	process_id;
+	pid_t	process_id;
 
-	// if (process_id = fork < 0)
-	// {
-	// }
-	ft_puterr("error: cannot execute ", argv_1cmd[0]);
-	free (argv_1cmd);
-	envp++;
+	if ((process_id = fork()) < 0)
+	{
+		ft_puterr("error: fatal", NULL);
+		free (argv_1cmd);
+		exit (EXIT_FAILURE);
+	}
+	if (process_id == 0)
+	{
+		if (execve(argv_1cmd[0], argv_1cmd, envp) < 0)
+		{
+			ft_puterr("error: cannot execute ", argv_1cmd[0]);
+			free (argv_1cmd);
+			exit(EXIT_FAILURE);
+		}
+
+	}
+	waitpid(0, NULL, 0); //to stop stuff printing out of order
 	return (0);
 
 
@@ -60,7 +72,6 @@ int	main (int argc, char **argv, char **envp)
 		if (strcmp(argv[i], ";") == 0)
 		{
 			cmd = ft_find_cmd(argv, placeholder, i);
-			write(1, "1\n", 2);
 			if (cmd)
 				execute_cmd(cmd, envp);
 			placeholder = i + 1;
