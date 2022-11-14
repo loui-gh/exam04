@@ -40,7 +40,6 @@ int ft_command_size(char **argv, const char *s)
 		}
 		i++;
 	}
-	printf("cmd size == %d\n", i);
 	return i;
 }
 
@@ -62,7 +61,6 @@ char **ft_add_command(char **argv, int *i)
 	while(j < size)
 	{
 		temp[j] = argv[j + *i];
-		printf("j + *i = %d\n", j + *i);
 		j++;
 	}
 	temp[j] = NULL;
@@ -123,6 +121,7 @@ int ft_execute_command(char **command, char **envp, char **pointer)
 	}
 	if(pid == 0)
 	{
+		printf("command[0] = %s\n", command[0]);
 		if(execve(command[0], command, envp) < 0)
 		{
 			ft_print_error("error: cannot execute ");
